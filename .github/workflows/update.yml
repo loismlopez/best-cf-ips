@@ -1,0 +1,35 @@
+# GitHub 上自动运行：每 6 小时跑一次，测完有变化就提交。
+# 排名是 GitHub Runner 那条线路测出的（Azure 机房），不是你家宽带的排名。
+# 这是部署在 GitHub 上自动运行的代价，也是 Lancelot 这类项目的做法。
+name: update
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: update
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: collect + scan
+        run: |
+          python3 collect.py
+          python3 scan.py --input candidates_all.txt
+          echo "--- top20 ---"
+          head -n 12 best-cf-ip-scanned-top20.txt
+      - name: commit and push
+        run: |
+          git config user.name "cf-scan-bot"
+          git config user.email "cf-scan-bot@users.noreply.github.com"
+          git add best-cf-ip-scanned-top*.txt result.csv candidates_*.txt
+          git diff --cached --quiet && echo "no change" || git commit -m "top cf ips updated $(date -u +'%Y-%m-%d %H:%M') [skip ci]"
+          git push

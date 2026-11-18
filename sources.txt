@@ -1,0 +1,10 @@
+# 候选源（2026-11-18 VM 实测均 HTTP 200）
+# 每行一个 URL，collect.py 会逐个拉取、提 IPv4、去重
+# 去掉 104 开头的是 collect 时的选项，不是源本身的问题
+https://raw.githubusercontent.com/love-ztm/cfip/refs/heads/main/best_ips.txt
+https://cf.junzhen.qzz.io/best_ips_bj.txt
+https://cf.junzhen.qzz.io/best_ips.txt
+https://bestcf.pages.dev/gslege/SG.txt
+https://bestcf.pages.dev/gslege/Cfxyz.txt
+https://bestcf.pages.dev/nirevil/ipv4.txt
+https://bestcf.pages.dev/domain/all.txt
