@@ -1,4 +1,4 @@
-# 50 best cf ips scanned at 2026-11-19 00:33 (SG, China-measured order)
+# 50 best cf ips scanned at 2026-11-19 00:40 (SG, China-measured order)
 
 108.162.192.1:443#SG 🇸🇬
 
