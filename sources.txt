@@ -8,3 +8,29 @@ https://bestcf.pages.dev/gslege/SG.txt
 https://bestcf.pages.dev/gslege/Cfxyz.txt
 https://bestcf.pages.dev/nirevil/ipv4.txt
 https://bestcf.pages.dev/domain/all.txt
+https://bestcf.pages.dev/gslege/JP.txt
+https://bestcf.pages.dev/tiancheng/jp.txt
+https://bestcf.pages.dev/gslege/US.txt
+https://bestcf.pages.dev/tiancheng/us.txt
+https://bestcf.pages.dev/tiancheng/sg.txt
+# 以下来自 bestcf.pages.dev 导航页（2026-11-19 实测均 HTTP 200，IPv4 计数见注释）
+# vps789/top*.txt 与 zhixuanwang/ipv4-onlyip.txt 已排除（基本无 IP）
+https://bestcf.pages.dev/cfyes/ipv4.txt
+https://bestcf.pages.dev/cmliu/all.txt
+https://bestcf.pages.dev/entryip/50.txt
+https://bestcf.pages.dev/gslege/DE.txt
+https://bestcf.pages.dev/gslege/NL.txt
+https://bestcf.pages.dev/ircf/ipv4.txt
+https://bestcf.pages.dev/kristi/all.txt
+https://bestcf.pages.dev/luoli/all.txt
+https://bestcf.pages.dev/lzj/all.txt
+https://bestcf.pages.dev/moistr/all.txt
+https://bestcf.pages.dev/s5gy/all.txt
+https://bestcf.pages.dev/tiancheng/all.txt
+https://bestcf.pages.dev/tiancheng2/all.txt
+https://bestcf.pages.dev/tiancheng3/all.txt
+https://bestcf.pages.dev/uouin/all.txt
+https://bestcf.pages.dev/vvhan/ipv4.txt
+https://bestcf.pages.dev/wetest/ipv4.txt
+https://bestcf.pages.dev/xinyitang3/ipv4.txt
+https://bestcf.pages.dev/yutian/all.txt

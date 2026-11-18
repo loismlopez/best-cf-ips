@@ -1,6 +1,7 @@
 # GitHub 上自动运行：每 6 小时跑一次，测完有变化就提交。
-# 排名是 GitHub Runner 那条线路测出的（Azure 机房），不是你家宽带的排名。
-# 这是部署在 GitHub 上自动运行的代价，也是 Lancelot 这类项目的做法。
+# 全局 top 文件是 Runner 延迟排的（Azure 机房，美国优先），只作参考。
+# 地区文件 top-jp / top-us / top-sg 是中国源站测好的顺序（build_region.py），
+# 不用 Runner 延迟重排，才是从中国看最快的地区排名。
 name: update
 on:
   schedule:
@@ -23,13 +24,19 @@ jobs:
       - name: collect + scan
         run: |
           python3 collect.py
-          python3 scan.py --input candidates_all.txt
-          echo "--- top20 ---"
+          python3 scan.py --input candidates_no104.txt
+          python3 build_region.py --region jp
+          python3 build_region.py --region us
+          python3 build_region.py --region sg
+          python3 merge_regions.py
+          echo "--- top20 (Runner latency) ---"
           head -n 12 best-cf-ip-scanned-top20.txt
+          echo "--- merged region file ---"
+          head -n 12 best-cf-ip-scanned-top-region.txt
       - name: commit and push
         run: |
           git config user.name "cf-scan-bot"
           git config user.email "cf-scan-bot@users.noreply.github.com"
-          git add best-cf-ip-scanned-top*.txt result.csv candidates_*.txt
+          git add best-cf-ip-scanned-top*.txt result.csv result-jp.csv result-us.csv result-sg.csv candidates_*.txt
           git diff --cached --quiet && echo "no change" || git commit -m "top cf ips updated $(date -u +'%Y-%m-%d %H:%M') [skip ci]"
           git push

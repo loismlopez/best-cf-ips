@@ -157,6 +157,8 @@ def main() -> None:
     ap.add_argument("--workers", type=int, default=50)
     ap.add_argument("--speed-test", type=int, default=0, help="对延迟前 N 名做下载测速，0=不测")
     ap.add_argument("--sort", choices=["latency", "speed"], default="latency")
+    ap.add_argument("--out-suffix", default="", help="如 jp：输出 best-cf-ip-scanned-top20-jp.txt")
+    ap.add_argument("--result-file", default="result.csv")
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -198,14 +200,18 @@ def main() -> None:
             rows = sorted(rows, key=lambda r: (-r["speed"], r["avg_ms"]))
 
     stamp = (datetime.now(timezone.utc) + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M")
-    with open(out_dir / "result.csv", "w", newline="", encoding="utf-8") as f:
+    with open(out_dir / args.result_file, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["ip", "port", "loss", "avg_ms", "speed_mbps", "colo", "country"])
         for r in rows:
             w.writerow([r["ip"], r["port"], f"{r['loss']:.2f}", f"{r['avg_ms']:.2f}",
                         f"{r['speed']:.2f}", r["colo"], r["country"]])
+    # top 文件只收国家码已确认的：trace 失败的 N/A 不进优选，只留在 result.csv 里备查。
+    # 否则 edgetunnel/CFPilot 会拿到 `#N/A` 这种没法按国家分组的节点。
+    ranked = [r for r in rows if r["country"] != "N/A"]
+    print(f"ranked (country known): {len(ranked)}/{len(rows)}")
     for n in (20, 50, 100, 200, 400):
-        take = rows[:n]
+        take = ranked[:n]
         if not take:
             continue
         lines = [f"# {len(take)} best cf ips scanned at {stamp}", ""]
@@ -213,9 +219,10 @@ def main() -> None:
             flag = FLAGS.get(r["country"], "")
             lines.append(f"{r['ip']}:{r['port']}#{r['country']} {flag}".rstrip())
             lines.append("")
-        (out_dir / f"best-cf-ip-scanned-top{n}.txt").write_text(
+        suffix = f"-{args.out_suffix}" if args.out_suffix else ""
+        (out_dir / f"best-cf-ip-scanned-top{n}{suffix}.txt").write_text(
             "\n".join(lines), encoding="utf-8")
-        print(f"top{n}: {len(take)}")
+        print(f"top{n}{suffix}: {len(take)}")
     if rows:
         print(f"best: {rows[0]['ip']}:{rows[0]['port']} {rows[0]['avg_ms']:.2f}ms "
               f"loss={rows[0]['loss']:.2f} {rows[0]['country']}/{rows[0]['colo']}")

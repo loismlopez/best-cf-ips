@@ -46,6 +46,30 @@ def extract(text: str) -> set[tuple[str, int]]:
     return out
 
 
+def extract_region(text: str, tag: str) -> set[tuple[str, int]]:
+    """只提行里带地区标记的 IP（源站自己标的地区优选）。
+    注意：这是源站标签，不是实测落点。实测落点由 scan.py 的 trace 定，
+    从美国 Runner 测，同一 IP 也可能落 US。"""
+    out: set[tuple[str, int]] = set()
+    for line in text.splitlines():
+        if tag not in line.upper() and not any(w in line for w in ("日本", "美国", "新加坡")):
+            continue
+        if tag == "JP" and "日本" not in line and "JP" not in line.upper():
+            continue
+        if tag == "US" and "美国" not in line and "US" not in line.upper():
+            continue
+        if tag == "SG" and "新加坡" not in line and "SG" not in line.upper() and "sg" not in line.lower():
+            continue
+        for m in IP_PORT_RE.finditer(line):
+            ip, port = m.group(1), m.group(2)
+            if not valid_ip(ip):
+                continue
+            p = int(port) if port else 443
+            if 1 <= p <= 65535:
+                out.add((ip, p))
+    return out
+
+
 def fetch(url: str, timeout: int = 20) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -61,17 +85,24 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     all_ips: set[tuple[str, int]] = set()
+    jp_ips: set[tuple[str, int]] = set()
+    us_ips: set[tuple[str, int]] = set()
+    sg_ips: set[tuple[str, int]] = set()
     for line in Path(args.sources).read_text(encoding="utf-8").splitlines():
         url = line.strip()
         if not url or url.startswith("#"):
             continue
         try:
-            got = extract(fetch(url))
+            text = fetch(url)
+            got = extract(text)
         except Exception as e:  # noqa: BLE001 - 单源失败不杀整批
             print(f"FAIL {url}: {e}")
             continue
         print(f"OK {url}: {len(got)}")
         all_ips |= got
+        jp_ips |= extract_region(text, "JP")
+        us_ips |= extract_region(text, "US")
+        sg_ips |= extract_region(text, "SG")
 
     no104 = {(ip, p) for ip, p in all_ips if not ip.startswith("104.")}
     only104 = {(ip, p) for ip, p in all_ips if ip.startswith("104.")}
@@ -79,11 +110,14 @@ def main() -> None:
         ("candidates_all.txt", all_ips),
         ("candidates_no104.txt", no104),
         ("candidates_only104.txt", only104),
+        ("candidates_jp.txt", jp_ips),
+        ("candidates_us.txt", us_ips),
+        ("candidates_sg.txt", sg_ips),
     ]:
         p = out_dir / name
         p.write_text("".join(f"{ip}:{port}\n" for ip, port in sorted(s)), encoding="utf-8")
         print(f"{name}: {len(s)}")
-    print(f"total unique (ip,port): {len(all_ips)}  no104={len(no104)} only104={len(only104)}")
+    print(f"total unique (ip,port): {len(all_ips)}  no104={len(no104)} only104={len(only104)} jp={len(jp_ips)} us={len(us_ips)} sg={len(sg_ips)}")
 
 
 if __name__ == "__main__":

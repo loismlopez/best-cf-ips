@@ -100,3 +100,5 @@ python3 scan.py --input candidates_all.txt --speed-test 20 --sort speed
   不杀整批，但总数会掉，跑完看一眼计数。
 - 国家码来自 `/cdn-cgi/trace` 的 `loc=`，是 IP 实际落到的机房国家，
   同一个 IP 不同运营商解析出的国家可能不同，这是 Cloudflare anycast 的正常现象。
+- trace 失败的 IP 记 `N/A`，只留在 `result.csv` 里备查，不进 top 文件。
+  首跑 72 条里就有 7 条 N/A，全是最慢的 141–199ms 那批。
