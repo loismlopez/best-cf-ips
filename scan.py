@@ -158,6 +158,7 @@ def main() -> None:
     ap.add_argument("--speed-test", type=int, default=0, help="对延迟前 N 名做下载测速，0=不测")
     ap.add_argument("--sort", choices=["latency", "speed"], default="latency")
     ap.add_argument("--out-suffix", default="", help="如 jp：输出 best-cf-ip-scanned-top20-jp.txt")
+    ap.add_argument("--label-country", default="", help="如 JP：top 文件里的 #CC 一律写该国家（按候选池归属标，不用实测落点）；留空则用 trace 实测国家")
     ap.add_argument("--result-file", default="result.csv")
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
@@ -217,8 +218,9 @@ def main() -> None:
         speed_note = " (by download speed)" if args.sort == "speed" else ""
         lines = [f"# {len(take)} best cf ips scanned at {stamp}{speed_note}", ""]
         for r in take:
-            flag = FLAGS.get(r["country"], "")
-            lines.append(f"{r['ip']}:{r['port']}#{r['country']} {flag}".rstrip())
+            cc = args.label_country or r["country"]
+            flag = FLAGS.get(cc, "")
+            lines.append(f"{r['ip']}:{r['port']}#{cc} {flag}".rstrip())
             lines.append("")
         suffix = f"-{args.out_suffix}" if args.out_suffix else ""
         (out_dir / f"best-cf-ip-scanned-top{n}{suffix}.txt").write_text(

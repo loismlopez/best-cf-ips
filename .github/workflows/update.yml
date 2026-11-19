@@ -37,7 +37,7 @@ jobs:
         run: |
           rm -f best-cf-ip-scanned-top20-speed.txt best-cf-ip-scanned-top50-speed.txt best-cf-ip-scanned-top100-speed.txt best-cf-ip-scanned-top200-speed.txt best-cf-ip-scanned-top400-speed.txt result-speed.csv
           grep -v '^104\.' candidates_jp.txt > candidates_jp_no104.txt
-          python3 scan.py --input candidates_jp_no104.txt --speed-test 50 --sort speed --out-suffix jp-speed --result-file result-jp-speed.csv
+          python3 scan.py --input candidates_jp_no104.txt --speed-test 50 --sort speed --out-suffix jp-speed --label-country JP --result-file result-jp-speed.csv
           echo "--- top50 JP by speed ---"
           head -n 12 best-cf-ip-scanned-top50-jp-speed.txt
       - name: commit and push

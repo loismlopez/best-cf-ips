@@ -40,7 +40,10 @@ best-cf-ip-scanned-top20/50/100/200/400.txt  ← 格式与原项目一致
 对日本候选池（`candidates_jp.txt` 去 104 后）先按延迟取前 50 名，各下 1MB 测速度，
 再按速度降序排，出一套 `best-cf-ip-scanned-top{20,50,100,200,400}-jp-speed.txt`
 （首行带 `by download speed`）+ `result-jp-speed.csv`。延迟≠速度：延迟最低的不一定下载最快。
-文件里的 `#CC` 是 Runner 实测落点（多为 US），不是源站标的 JP，别混了。
+文件里的 `#JP` 是候选池归属（日本池），不是 Runner 实测落点——同一 IP 从 Runner 测常落 US，
+如地区文件日本第一的 `108.162.198.3`，Runner 测落 SEA、速度 12.79Mbps，从中国测才落 JP；
+实测落点见 `result-jp-speed.csv` 的 country 列。不能按实测国家过滤：那样会把 `108.162.198.3`
+这类最快的踢掉，剩下只有约 1Mbps 的东京段 IP。
 旧的全局 `-speed` 文件已停更、由 workflow 自动删掉，只留日本版。
 
 速度模式只跑在 GitHub Runner 上（美国视角，仅供参考），不走本地——
