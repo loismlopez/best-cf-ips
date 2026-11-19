@@ -33,15 +33,18 @@ jobs:
           head -n 12 best-cf-ip-scanned-top20.txt
           echo "--- merged region file ---"
           head -n 12 best-cf-ip-scanned-top-region.txt
-      - name: speed ranking (Runner, US vantage)
+      - name: speed ranking JP (Runner, US vantage)
         run: |
-          python3 scan.py --input candidates_no104.txt --speed-test 50 --sort speed --out-suffix speed --result-file result-speed.csv
-          echo "--- top20 by speed ---"
-          head -n 12 best-cf-ip-scanned-top20-speed.txt
+          rm -f best-cf-ip-scanned-top20-speed.txt best-cf-ip-scanned-top50-speed.txt best-cf-ip-scanned-top100-speed.txt best-cf-ip-scanned-top200-speed.txt best-cf-ip-scanned-top400-speed.txt result-speed.csv
+          grep -v '^104\.' candidates_jp.txt > candidates_jp_no104.txt
+          python3 scan.py --input candidates_jp_no104.txt --speed-test 50 --sort speed --out-suffix jp-speed --result-file result-jp-speed.csv
+          echo "--- top50 JP by speed ---"
+          head -n 12 best-cf-ip-scanned-top50-jp-speed.txt
       - name: commit and push
         run: |
           git config user.name "cf-scan-bot"
           git config user.email "cf-scan-bot@users.noreply.github.com"
-          git add best-cf-ip-scanned-top*.txt result.csv result-speed.csv result-jp.csv result-us.csv result-sg.csv candidates_*.txt
+          git add best-cf-ip-scanned-top*.txt result.csv result-jp-speed.csv result-jp.csv result-us.csv result-sg.csv candidates_*.txt
+          git rm -q --cached --ignore-unmatch best-cf-ip-scanned-top20-speed.txt best-cf-ip-scanned-top50-speed.txt best-cf-ip-scanned-top100-speed.txt best-cf-ip-scanned-top200-speed.txt best-cf-ip-scanned-top400-speed.txt result-speed.csv || true
           git diff --cached --quiet && echo "no change" || git commit -m "top cf ips updated $(date -u +'%Y-%m-%d %H:%M') [skip ci]"
           git push

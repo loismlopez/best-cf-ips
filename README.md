@@ -34,12 +34,14 @@ best-cf-ip-scanned-top20/50/100/200/400.txt  ← 格式与原项目一致
 想复刻 Lancelot 就别用默认：`scan.py` 默认只测延迟、不测下载；
 想按速度排，再加 `--speed-test 20 --sort speed`。
 
-### 按下载速度排（`-speed` 文件）
+### 按下载速度排（日本专测，`-jp-speed` 文件）
 
-`scan.py --speed-test 50 --sort speed --out-suffix speed --result-file result-speed.csv`：
-先按延迟取前 50 名，各下 1MB 测速度，再按速度降序排，出一套
-`best-cf-ip-scanned-top{20,50,100,200,400}-speed.txt`（首行带 `by download speed`）
-+ `result-speed.csv`。延迟≠速度：延迟最低的不一定下载最快。
+`scan.py --input candidates_jp_no104.txt --speed-test 50 --sort speed --out-suffix jp-speed --result-file result-jp-speed.csv`：
+对日本候选池（`candidates_jp.txt` 去 104 后）先按延迟取前 50 名，各下 1MB 测速度，
+再按速度降序排，出一套 `best-cf-ip-scanned-top{20,50,100,200,400}-jp-speed.txt`
+（首行带 `by download speed`）+ `result-jp-speed.csv`。延迟≠速度：延迟最低的不一定下载最快。
+文件里的 `#CC` 是 Runner 实测落点（多为 US），不是源站标的 JP，别混了。
+旧的全局 `-speed` 文件已停更、由 workflow 自动删掉，只留日本版。
 
 速度模式只跑在 GitHub Runner 上（美国视角，仅供参考），不走本地——
 本地一直开 OpenClash 时 TCP 会被透明接管，延迟假低（实测最快 0.65ms）、
