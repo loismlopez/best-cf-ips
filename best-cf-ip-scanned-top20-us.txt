@@ -1,4 +1,4 @@
-# 20 best cf ips scanned at 2026-11-19 12:06 (US, China-measured order)
+# 20 best cf ips scanned at 2026-11-19 12:18 (US, China-measured order)
 
 103.31.4.6:443#US 🇺🇸
 
