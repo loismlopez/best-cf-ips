@@ -34,6 +34,17 @@ best-cf-ip-scanned-top20/50/100/200/400.txt  ← 格式与原项目一致
 想复刻 Lancelot 就别用默认：`scan.py` 默认只测延迟、不测下载；
 想按速度排，再加 `--speed-test 20 --sort speed`。
 
+### 按下载速度排（`-speed` 文件）
+
+`scan.py --speed-test 50 --sort speed --out-suffix speed --result-file result-speed.csv`：
+先按延迟取前 50 名，各下 1MB 测速度，再按速度降序排，出一套
+`best-cf-ip-scanned-top{20,50,100,200,400}-speed.txt`（首行带 `by download speed`）
++ `result-speed.csv`。延迟≠速度：延迟最低的不一定下载最快。
+
+速度模式只跑在 GitHub Runner 上（美国视角，仅供参考），不走本地——
+本地一直开 OpenClash 时 TCP 会被透明接管，延迟假低（实测最快 0.65ms）、
+trace 全 N/A，测出的速度也不是直连速度。
+
 ### 104 开头段
 
 `过滤 104 开头`有两种意思，结果差很多，`collect.py` 三种都出，你自己选：
@@ -82,6 +93,9 @@ FILTER=no104 ./run.sh    # 去掉 104.* 再测
 ```bash
 python3 scan.py --input candidates_all.txt --speed-test 20 --sort speed
 ```
+
+本地开 OpenClash 时上面这条别跑，测出来不准（见“按下载速度排”一节）；
+`run_local.sh` 里的速度测试同样只在直连时有效。
 
 本地别和 Actions 同时推同一批文件，会打架。定时只走 Actions。
 

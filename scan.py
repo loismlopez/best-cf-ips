@@ -214,7 +214,8 @@ def main() -> None:
         take = ranked[:n]
         if not take:
             continue
-        lines = [f"# {len(take)} best cf ips scanned at {stamp}", ""]
+        speed_note = " (by download speed)" if args.sort == "speed" else ""
+        lines = [f"# {len(take)} best cf ips scanned at {stamp}{speed_note}", ""]
         for r in take:
             flag = FLAGS.get(r["country"], "")
             lines.append(f"{r['ip']}:{r['port']}#{r['country']} {flag}".rstrip())
